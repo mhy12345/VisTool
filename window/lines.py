@@ -19,5 +19,6 @@ class Lines(BaseWindow):
                 Y = self._send_data(),
                 X = np.array([self.counter]),
                 win = self.name, 
-                update='append' if self.counter>1 else None
+                update='append' if self.counter>1 else None,
+                opts = {'legend':self.sources},
                 )

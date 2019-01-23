@@ -2,6 +2,8 @@ import torch
 from .data import find_data_using_name
 from .window import find_window_using_name
 import visdom
+import logging
+logger = logging.getLogger(__name__)
 
 
 class VisTool:
@@ -10,6 +12,8 @@ class VisTool:
         self.windows = {}
         self.env = env
         self.vis = visdom.Visdom(env = env)
+        self.counter = 0
+        logger.info("visdom instance created <%s>..."%env)
 
     def register_data(self, name, type, *args, **kwargs):
         data = find_data_using_name(type)
@@ -44,7 +48,16 @@ class VisTool:
     def __getitem__(self, key):
         return self.data[key].eval()
 
-    def sync(self):
-        for win in self.windows.values():
-            win.sync()
+    def sync(self, disp_freq=1):
+        self.counter += 1
+        if self.counter >= disp_freq:
+            self.counter = 1
+        else:
+            return 
+        for key,win in self.windows.items():
+            try:
+                win.sync()
+            except Exception as e:
+                logger.warn('Cannot sync window %s'%key)
+                logger.warn('%s'%e)
 
