@@ -43,6 +43,8 @@ class VisTool:
         self.vis.text(text, win='_log')
 
     def update(self, key, value):
+        if isinstance(value, torch.Tensor):
+            value = value.detach()
         self.data[key].update(value)
 
     def __getitem__(self, key):
